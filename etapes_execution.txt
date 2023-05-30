@@ -1,0 +1,5 @@
+Etape 1 : Il faut s'assurer que la commande pip est installé sur la machine locale, si c'est pas le cas il faut l'installé 
+
+Etape 2 : Sur le repertoire du projet faire un make install, pour installé les bibliothèques et le modelele de langue français pour spacy
+
+Etape 3 : Faire un make run, pour exécuté le code
