@@ -87,6 +87,10 @@ def present_target():
         SOURCE_SELECTED = 'imparfait'
         TARGET_SELECTED = 'present'
         
+def traduire():
+    ## insérer code
+    pass
+        
     
 #-----------------------création fenêtre
 
@@ -225,8 +229,8 @@ traduire_frame = Frame(root, bg=BACKGROUND_COLOR_1, padx=5, pady=25)
 
 traduire_border= Frame(traduire_frame, bg=THEME_COLOR_1, padx=5, pady=5)
 
-traduire_button = Button(traduire_border, text="Traduire",
-                         bg=BUTTON_COLOR, font=(POLICE, '14', 'bold'))
+traduire_button = Button(traduire_border, text="Traduire", bg=BUTTON_COLOR,
+                         font=(POLICE, '14', 'bold'), command=traduire)
 traduire_button.pack()
 
 traduire_border.pack()
