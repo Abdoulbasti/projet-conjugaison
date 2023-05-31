@@ -1,4 +1,5 @@
 from tkinter import *
+import conjugaisons
 
 BACKGROUND_COLOR_1 = "#e6e9f2"
 BACKGROUND_COLOR_2 = "#dbdee7"
@@ -234,3 +235,11 @@ traduire_frame.pack()
 
 root.pack(expand=YES)
 fenetre.mainloop()
+
+
+
+
+
+
+
+
