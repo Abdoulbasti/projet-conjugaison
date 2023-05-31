@@ -1,5 +1,8 @@
 from tkinter import *
 import conjugaisons
+import spacy
+
+modele_francais = spacy.load('fr_core_news_sm')
 
 BACKGROUND_COLOR_1 = "#e6e9f2"
 BACKGROUND_COLOR_2 = "#dbdee7"
@@ -11,8 +14,8 @@ BUTTON_COLOR_SELECTED_ACTIVE = "#788dd3"
 BUTTON_HB_COLOR = "#9fa4b4"
 POLICE = "Liberation Sans"
 
-SOURCE_SELECTED = 'présent'
-TARGET_SELECTED = 'imparfait'
+SOURCE_SELECTED = 'Présent'
+TARGET_SELECTED = 'Imparfait'
 
 def copy_text():
     try:
@@ -26,6 +29,7 @@ def copy_text():
 
 def show_context_menu(event):
     context_menu.tk_popup(event.x_root, event.y_root)
+    
 
 def switch_buttons(old_selected : Button, old_selected_frame : Frame,
                    new_selected : Button, new_selected_frame : Frame):
@@ -46,54 +50,84 @@ def switch_buttons(old_selected : Button, old_selected_frame : Frame,
 def imparfait_source():
     global SOURCE_SELECTED, TARGET_SELECTED
     # insérer appel traduction
-    if SOURCE_SELECTED != 'imparfait' :
+    if SOURCE_SELECTED != 'Imparfait' :
         switch_buttons(present_source_button, present_source_button_frame,
                        imparfait_source_button, imparfait_source_button_frame)
         switch_buttons(imparfait_target_button, imparfait_target_button_frame,
                     present_target_button, present_target_button_frame)
-        SOURCE_SELECTED = 'imparfait'
-        TARGET_SELECTED = 'present'
+        SOURCE_SELECTED = 'Imparfait'
+        TARGET_SELECTED = 'Présent'
         
 def present_source():
     global SOURCE_SELECTED, TARGET_SELECTED
     # insérer appel traduction
-    if SOURCE_SELECTED != 'present' :
+    if SOURCE_SELECTED != 'Présent' :
         switch_buttons(imparfait_source_button, imparfait_source_button_frame,
                     present_source_button, present_source_button_frame)
         switch_buttons(present_target_button, present_target_button_frame,
                        imparfait_target_button, imparfait_target_button_frame)
-        SOURCE_SELECTED = 'present'
-        TARGET_SELECTED = 'imparfait'
+        SOURCE_SELECTED = 'Présent'
+        TARGET_SELECTED = 'Imparfait'
         
 def imparfait_target():
     global SOURCE_SELECTED, TARGET_SELECTED
     # insérer appel traduction
-    if TARGET_SELECTED != 'imparfait' :
+    if TARGET_SELECTED != 'Imparfait' :
         switch_buttons(present_target_button, present_target_button_frame,
                        imparfait_target_button, imparfait_target_button_frame)
         switch_buttons(imparfait_source_button, imparfait_source_button_frame,
                     present_source_button, present_source_button_frame)
-        SOURCE_SELECTED = 'present'
-        TARGET_SELECTED = 'imparfait'
+        SOURCE_SELECTED = 'Présent'
+        TARGET_SELECTED = 'Imparfait'
         
 def present_target():
     global SOURCE_SELECTED, TARGET_SELECTED
     # insérer appel traduction
-    if TARGET_SELECTED != 'present' :
+    if TARGET_SELECTED != 'Présent' : 
         switch_buttons(imparfait_target_button, imparfait_target_button_frame,
                     present_target_button, present_target_button_frame)
         switch_buttons(present_source_button, present_source_button_frame,
                        imparfait_source_button, imparfait_source_button_frame)
-        SOURCE_SELECTED = 'imparfait'
-        TARGET_SELECTED = 'present'
-        
+        SOURCE_SELECTED = 'Imparfait'
+        TARGET_SELECTED = 'Présent'
+  
 def traduire():
-    ## insérer code
-    pass
+    # insérer code
         
+    if SOURCE_SELECTED == 'Présent' and TARGET_SELECTED == 'Imparfait' : 
+        phrase_a_conjugue = source_text.get("1.0", END)[:-1]
+        target_text.config(state='normal')
+        target_text.delete("0.0", END)
+        
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, TARGET_SELECTED, modele_francais)
+        
+        target_text.insert(END, phrase_conjugue)
+        
+    elif SOURCE_SELECTED == 'Imparfait' and TARGET_SELECTED == 'Présent' : 
+        phrase_a_conjugue = source_text.get("1.0", END)[:-1]
+        target_text.config(state='normal')
+        target_text.delete("0.0", END)
+        
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, TARGET_SELECTED, modele_francais)
+        
+        target_text.insert(END, phrase_conjugue)
     
-#-----------------------création fenêtre
-
+    
+    target_text.config(state='disabled')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+#---------------------------------------------------------création fenêtre-----------------------------------------------#
 fenetre=Tk()
 
 fenetre.title('Traductemps')
@@ -131,7 +165,7 @@ source_buttons_frame = Frame(source_pick_frame, bg=BACKGROUND_COLOR_2, pady=15)
 imparfait_source_button_frame = Frame(source_buttons_frame, bg=BACKGROUND_COLOR_2,  
                          highlightbackground = BUTTON_HB_COLOR, highlightthickness = 1)
 
-imparfait_source_button = Button(imparfait_source_button_frame, text='imparfait',
+imparfait_source_button = Button(imparfait_source_button_frame, text='Imparfait',
                          font=(POLICE, '12'), bg=BUTTON_COLOR, relief='flat',
                          command=imparfait_source)
 
@@ -141,7 +175,7 @@ imparfait_source_button.pack()
 present_source_button_frame = Frame(source_buttons_frame, bg=BACKGROUND_COLOR_2, 
                          highlightbackground = THEME_COLOR_1, highlightthickness = 3)
 
-present_source_button = Button(present_source_button_frame, text='présent',
+present_source_button = Button(present_source_button_frame, text='Présent',
                          bg=BUTTON_COLOR_SELECTED, activebackground=BUTTON_COLOR_SELECTED_ACTIVE, 
                          font=(POLICE, '12', 'bold'), relief='flat', command=present_source)
 
@@ -157,6 +191,8 @@ source_pick_frame.pack()
 
 source_text = Text(source_frame, width=45, height=13, relief='sunken', padx=10, pady=10)
 source_text.pack()
+#source_text_string = str(source_text) #Phrase à conjugué
+#print(source_text_string) #Affichage de ce qui est entrée
 
 ## target
 
@@ -173,7 +209,7 @@ target_buttons_frame = Frame(target_pick_frame, bg=BACKGROUND_COLOR_2, pady=15)
 imparfait_target_button_frame = Frame(target_buttons_frame, bg=BACKGROUND_COLOR_2, 
                          highlightbackground = THEME_COLOR_1, highlightthickness = 3)
 
-imparfait_target_button = Button(imparfait_target_button_frame, text='imparfait',
+imparfait_target_button = Button(imparfait_target_button_frame, text='Imparfait',
                          bg=BUTTON_COLOR_SELECTED, activebackground=BUTTON_COLOR_SELECTED_ACTIVE, 
                          font=(POLICE, '12', 'bold'), relief='flat', 
                          command=imparfait_target)
@@ -184,7 +220,7 @@ imparfait_target_button.pack()
 present_target_button_frame = Frame(target_buttons_frame, bg=BACKGROUND_COLOR_2,  
                          highlightbackground = BUTTON_HB_COLOR, highlightthickness = 1)
 
-present_target_button = Button(present_target_button_frame, text='présent',
+present_target_button = Button(present_target_button_frame, text='Présent',
                          font=(POLICE, '12'), bg=BUTTON_COLOR, relief='flat',command=present_target)
 
 present_target_button.pack()
@@ -198,7 +234,7 @@ target_buttons_frame.pack()
 target_pick_frame.pack()
 
 target_text = Text(target_frame, height=13, width=45, padx=10, pady=10)
-target_text.insert(END, "texte exemple")
+target_text.insert(END, "texte exemple") # resultat de la conjugaison 
 target_text.configure(state='disabled', bd=0, highlightthickness=0, relief='flat')
 
 # Ajouter le menu contextuel avec l'option "Copier"
@@ -239,11 +275,3 @@ traduire_frame.pack()
 
 root.pack(expand=YES)
 fenetre.mainloop()
-
-
-
-
-
-
-
-

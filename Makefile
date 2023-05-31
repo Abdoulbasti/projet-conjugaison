@@ -1,13 +1,14 @@
 .PHONY: run clean install
 
 install:
+	pip install tk
 	pip install mlconjug3
 	pip install spacy
-	python3.10 -m spacy download fr_core_news_sm
+	python3 -m spacy download fr_core_news_sm
 
 run:
 	@echo "Running the program..."
-	python3 src/conjugaisons.py
+	python3 src/gui.py
 
 clean:
 	@echo "Cleaning up..."

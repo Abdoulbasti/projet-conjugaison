@@ -156,26 +156,27 @@ def conjugaison_phrase(phrase, temps, modele_langue) :
     try:
         verbes_sujets = sujet_de_verbe_infinitif(modele_langue, phrase)
         phrase_conjugue = replace_verbs_in_sentence(phrase, temps, modele_langue, verbes_sujets)
-        print((phrase_conjugue))
+        return phrase_conjugue
+        
         
     except AttributeError as e1:
         message_erreur = str(e1)
-        print("Erreur AttributeError :", message_erreur)
+        return "Erreur AttributeError :" + message_erreur
     except TypeError as e2:
         message_erreur = str(e2)
-        print("Erreur TypeError :", message_erreur)
+        return "Erreur TypeError :" + message_erreur
     except ValueError as e3:
         message_erreur = str(e3)
-        print("Erreur ValueError :", message_erreur)
+        return "Erreur ValueError :" + message_erreur
     except NameError as e4:
         message_erreur = str(e4)
-        print("Erreur NameError :", message_erreur)
+        return "Erreur NameError :" + message_erreur
     except IndexError as e5: 
         message_erreur = str(e5)
-        print("Erreur NameError :", message_erreur)
+        return "Erreur AttributeError :" + message_erreur
     except KeyError as e6: 
-        message_erreur = str(e6)
-        print("Erreur KeyError :", message_erreur)    
+        message_erreur = str(e6) 
+        return "Erreur KeyError :" + message_erreur 
     
     
     
@@ -215,10 +216,9 @@ p_imparfait8 = "alors que la brume enveloppait la forêt, les oiseaux entonnaien
 textes_imparfaits = [p_imparfait0, p_imparfait1, p_imparfait2, p_imparfait3, p_imparfait4, p_imparfait5, p_imparfait6, p_imparfait7, p_imparfait8]         
 
 
-
 # Ceci est la forme utilisé -> 'il (elle, on)' et 'ils (elles)'
 
-
+"""
 def main(modele):
     print("Bonjour, bienvenue dans mon programme !!!!...................")
     temps1 = "Présent"
@@ -231,4 +231,4 @@ def main(modele):
 
 # Ceci permet d'exécuter la fonction main() seulement si ce fichier est exécuté directement (et non importé comme un module)
 if __name__ == "__main__":
-    main(modele_francais)
+    main(modele_francais)"""
