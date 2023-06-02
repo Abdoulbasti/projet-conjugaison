@@ -179,50 +179,7 @@ def conjugaison_phrase(phrase, temps, modele_langue) :
         return "Erreur AttributeError :" + message_erreur
     except KeyError as e6: 
         message_erreur = str(e6) 
-        return "Erreur KeyError :" + message_erreur     
-    
-    
-    
-#modele_francais = spacy.load('fr_dep_news_trf')
-modele_francais = spacy.load('fr_core_news_sm')
-
-p_present0 = "je vais à l'école et j'étudie le français." #OK
-p_present1 = "tu manges, tu bois et tu discutes avec tes amis." #OK, probleme avec le petit modele
-p_present2 = "tes voisins lui prêtent souvent leur voiture." #Ok , probleme avec le petit modele
-p_present5 = "ils jouent au football, marquent des buts et célèbrent leurs victoires." #Ok
-p_present4 = "alors que le monde avance sans relâche, je médite à travers l'écriture et la méditation." #OK
-p_present3 = "pendant qu'il court doucement, les fleurs s'épanouissent et embaument l'air de leur parfum enivrant." #OK, probleme avec le petit modele
-p_present6 = "alors que les vagues s'écrasent contre les rochers, je contemple l'immensité de l'océan et je me sens bien." #OK 
-p_present7 = "pendant que la ville s'agite, je me promène tranquillement dans les ruelles étroites, observant les détails architecturaux." #OK
-p_present8 = "alors que le soleil se lève à l'horizon, les oiseaux entament leur symphonie matinale." #OK
-textes_presents = [p_present0, p_present1, p_present2, p_present3, p_present4, p_present5, p_present6, p_present7, p_present8 ]
-
-
-p_imparfait0 = "pendant que le vent soufflait doucement à travers les arbres, les feuilles dansaient gracieusement au sol." #OK
-p_imparfait1 = "je lisais un livre pendant que mon ami écoutait de la musique." #OK
-p_imparfait2 = "pendant que la vieille maison craquait sous le poids des années, les souvenirs s'entremêlaient dans chaque recoin." #OK
-p_imparfait3 = "alors que la lune éclairait la scène, les acteurs improvisaient avec passion et créativité sur scène." #OK
-p_imparfait4 = "nous avancions vers le parc, mangions des glaces et jouions ensemble."#OK
-p_imparfait5 = "mon patron me confiait régulièrement de nouveaux projets." #OK
-p_imparfait6 = "elles étudiaient à la bibliothèque, lisaient des livres et prenaient des notes." #OK
-p_imparfait7 = "pendant que les étoiles scintillaient dans le ciel nocturne, les amoureux se promenaient main dans la main le long de la rivière."#OK
-p_imparfait8 = "alors que la brume enveloppait la forêt, les oiseaux entonnaient un chant mystérieux et envoûtant."#OK
-textes_imparfaits = [p_imparfait0, p_imparfait1, p_imparfait2, p_imparfait3, p_imparfait4, p_imparfait5, p_imparfait6, p_imparfait7, p_imparfait8]         
-
-
-
-"""
-def main(modele):
-    print("Bonjour, bienvenue dans mon programme !!!!...................")
-    sentence = "J'ai mangé une pomme."
-    print(detect_tense_in_sentence(sentence, modele))
-
-# Ceci permet d'exécuter la fonction main() seulement si ce fichier est exécuté directement (et non importé comme un module)
-if __name__ == "__main__":
-    main(modele_francais)"""
-    
-    
-    
+        return "Erreur KeyError :" + message_erreur         
     
 """
 PHRASES AUX PRÉSENTS : 
@@ -233,7 +190,6 @@ alors que le monde avance sans relâche, je médite à travers l'écriture et la
 alors que les vagues s'écrasent contre les rochers, je contemple l'immensité de l'océan et je me sens bien
 pendant que la ville s'agite, je me promène tranquillement dans les ruelles étroites, observant les détails architecturaux
 alors que le soleil se lève à l'horizon, les oiseaux entament leur symphonie matinale
-
 
 
 PHRASES À L'IMPARFAIT:
@@ -252,10 +208,10 @@ Tu achetas un nouveau livre pour enrichir ta collection
 Dès que je reçus la lettre, je courus à la poste pour envoyer une réponse
 Quand il vit le chien dans la rue, il s'arrêta, le regarda, et lui offrit un morceau de son sandwich
 
+
 PHRASES AUX FUTUR:
 les amis de mes amis arriveront demain
 elle achètera les ingrédients nécessaires et préparera un dîner spécial pour nous
 ils arriveront à l'aéroport, prendront un taxi, et nous rejoindront à l'hôtel
 il fera ses valises et prendra le premier avion pour Paris
-
 """
