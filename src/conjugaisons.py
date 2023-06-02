@@ -135,6 +135,7 @@ def replace_verbs_in_sentence(sentence, temps, modele, verbes_sujets):
 
 
 
+
 #Conjugaison de verbe est correct !!!!
 #conjugate_verb('manger', 'Présent', 'je')
 
@@ -155,7 +156,9 @@ def conjugate_verb(verb, tense, subject):
 def conjugaison_phrase(phrase, temps, modele_langue) :
     try:
         verbes_sujets = sujet_de_verbe_infinitif(modele_langue, phrase)
-        phrase_conjugue = replace_verbs_in_sentence(phrase, temps, modele_langue, verbes_sujets)
+        verbes_sujets_lower = {k: v.lower() for k, v in verbes_sujets.items()}
+        
+        phrase_conjugue = replace_verbs_in_sentence(phrase, temps, modele_langue, verbes_sujets_lower)
         return phrase_conjugue
         
         
@@ -176,16 +179,7 @@ def conjugaison_phrase(phrase, temps, modele_langue) :
         return "Erreur AttributeError :" + message_erreur
     except KeyError as e6: 
         message_erreur = str(e6) 
-        return "Erreur KeyError :" + message_erreur 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        return "Erreur KeyError :" + message_erreur     
     
     
     
@@ -216,19 +210,52 @@ p_imparfait8 = "alors que la brume enveloppait la forêt, les oiseaux entonnaien
 textes_imparfaits = [p_imparfait0, p_imparfait1, p_imparfait2, p_imparfait3, p_imparfait4, p_imparfait5, p_imparfait6, p_imparfait7, p_imparfait8]         
 
 
-# Ceci est la forme utilisé -> 'il (elle, on)' et 'ils (elles)'
 
 """
 def main(modele):
     print("Bonjour, bienvenue dans mon programme !!!!...................")
-    temps1 = "Présent"
-    temps2 = "Imparfait"
-    temps3 = "Passé Simple"
-    #print(conjugate_verb('manger', temps1, 'ils (elles)'))  # Résultat : 'mange'
-    #conjugate_verb('manger', temps1, '1s')
-    conjugaison_phrase(textes_presents[8], temps2, modele)
-    
+    sentence = "J'ai mangé une pomme."
+    print(detect_tense_in_sentence(sentence, modele))
 
 # Ceci permet d'exécuter la fonction main() seulement si ce fichier est exécuté directement (et non importé comme un module)
 if __name__ == "__main__":
     main(modele_francais)"""
+    
+    
+    
+    
+"""
+PHRASES AUX PRÉSENTS : 
+il vas à l'école et j'étudie le français
+ils jouent au football, marquent des buts et célèbrent leurs victoires
+J'aime les mangues bio, ils donnent des vitamines
+alors que le monde avance sans relâche, je médite à travers l'écriture et la méditation
+alors que les vagues s'écrasent contre les rochers, je contemple l'immensité de l'océan et je me sens bien
+pendant que la ville s'agite, je me promène tranquillement dans les ruelles étroites, observant les détails architecturaux
+alors que le soleil se lève à l'horizon, les oiseaux entament leur symphonie matinale
+
+
+
+PHRASES À L'IMPARFAIT:
+pendant que le vent soufflait doucement à travers les arbres, les feuilles dansaient gracieusement au sol
+je lisais un livre pendant que mon ami écoutait de la musique
+pendant que la vieille maison craquait sous le poids des années, les souvenirs s'entremêlaient dans chaque recoin
+alors que la lune éclairait la scène, les acteurs improvisaient avec passion et créativité sur scène
+nous avancions vers le parc, mangions des glaces et jouions ensemble
+mon patron me confiait régulièrement de nouveaux projets
+pendant que les étoiles scintillaient dans le ciel nocturne, les amoureux se promenaient main dans la main le long de la rivière
+alors que la brume enveloppait la forêt, les oiseaux entonnaient un chant mystérieux et envoûtant
+
+
+PHRASES AUX PASSÉ SIMPLE :
+Tu achetas un nouveau livre pour enrichir ta collection
+Dès que je reçus la lettre, je courus à la poste pour envoyer une réponse
+Quand il vit le chien dans la rue, il s'arrêta, le regarda, et lui offrit un morceau de son sandwich
+
+PHRASES AUX FUTUR:
+les amis de mes amis arriveront demain
+elle achètera les ingrédients nécessaires et préparera un dîner spécial pour nous
+ils arriveront à l'aéroport, prendront un taxi, et nous rejoindront à l'hôtel
+il fera ses valises et prendra le premier avion pour Paris
+
+"""

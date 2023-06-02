@@ -107,27 +107,39 @@ def temps_select(temps):
     #       %(get_button_name(SOURCE_SELECTED["button"]), get_button_name(TARGET_SELECTED["button"])))
                          
 def traduire():
+    conjugaison_temps = None
     source_temps = get_button_name(SOURCE_SELECTED["button"])
     target_temps = get_button_name(TARGET_SELECTED["button"])
     
     # ⁂ (source uniq.) / Passé simple / Imparfait / Présent / Futur
         
-    if source_temps == 'Présent' and target_temps == 'Imparfait' : 
+    if target_temps == 'Imparfait' : 
         phrase_a_conjugue = source_text.get("1.0", END)[:-1]
         target_text.config(state='normal')
         target_text.delete("0.0", END)
-        
         phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
-        
         target_text.insert(END, phrase_conjugue)
         
-    elif source_temps == 'Imparfait' and target_temps == 'Présent' : 
+    elif target_temps == 'Présent' : 
         phrase_a_conjugue = source_text.get("1.0", END)[:-1]
         target_text.config(state='normal')
         target_text.delete("0.0", END)
-        
         phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
+        target_text.insert(END, phrase_conjugue)
         
+    elif target_temps == 'Passé simple' : 
+        target_temps = "Passé Simple"
+        phrase_a_conjugue = source_text.get("1.0", END)[:-1]
+        target_text.config(state='normal')
+        target_text.delete("0.0", END)
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
+        target_text.insert(END, phrase_conjugue)
+        
+    elif target_temps == 'Futur' : 
+        phrase_a_conjugue = source_text.get("1.0", END)[:-1]
+        target_text.config(state='normal')
+        target_text.delete("0.0", END)
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
         target_text.insert(END, phrase_conjugue)
     
     
@@ -264,7 +276,7 @@ target_buttons_frame.pack()
 target_pick_frame.pack()
 
 target_text = Text(target_frame, height=13, width=45, padx=10, pady=10)
-target_text.insert(END, "texte exemple") # resultat de la conjugaison 
+target_text.insert(END, "RÉSULAT DE LA CONJUGAISON...") # resultat de la conjugaison 
 target_text.configure(state='disabled', bd=0, highlightthickness=0, relief='flat')
 
 # Ajouter le menu contextuel avec l'option "Copier"

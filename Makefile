@@ -1,7 +1,6 @@
 .PHONY: run clean install
 
 install:
-	pip install tk
 	pip install mlconjug3
 	pip install spacy
 	python3 -m spacy download fr_core_news_sm
