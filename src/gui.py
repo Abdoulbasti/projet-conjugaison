@@ -1,6 +1,7 @@
 from tkinter import *
 import conjugaisons
 import spacy
+import random
 
 modele_francais = spacy.load('fr_core_news_sm')
 
@@ -14,8 +15,10 @@ BUTTON_COLOR_SELECTED_ACTIVE = "#788dd3"
 BUTTON_HB_COLOR = "#9fa4b4"
 POLICE = "Liberation Sans"
 
-SOURCE_SELECTED = 'Présent'
-TARGET_SELECTED = 'Imparfait'
+SOURCE_SELECTED = None
+TARGET_SELECTED = None
+
+
 
 def copy_text():
     try:
@@ -29,93 +32,106 @@ def copy_text():
 
 def show_context_menu(event):
     context_menu.tk_popup(event.x_root, event.y_root)
-    
 
-def switch_buttons(old_selected : Button, old_selected_frame : Frame,
-                   new_selected : Button, new_selected_frame : Frame):
+def get_button_name(button):
+    return button["text"].capitalize()
+        
+def pick_random_target(exclued):
+    temps = None
+    while(True):
+        temps = random.choice(list(target_buttons.values()))
+        if temps["button"]["text"].capitalize() != exclued : break
+    return temps
+
+def initialize_button(master, origin, name, is_selected):
+    if is_selected :
+        frame = Frame(master, bg=BACKGROUND_COLOR_2, 
+              highlightbackground = THEME_COLOR_1, highlightthickness = 3) 
+        button = Button(frame, text=name,
+              bg=BUTTON_COLOR_SELECTED, activebackground=BUTTON_COLOR_SELECTED_ACTIVE, 
+              font=(POLICE, '10', 'bold'), relief='flat')
+    else :
+        frame = Frame(master, bg=BACKGROUND_COLOR_2,  
+              highlightbackground = BUTTON_HB_COLOR, highlightthickness = 1)
+        button = Button(frame, text=name,
+              font=(POLICE, '10'), bg=BUTTON_COLOR, relief='flat') 
+        
+    return {"origin" : origin, "frame" : frame, "button" : button}
+  
+def switch_buttons(old_selected, new_selected):
     # un-set selected
-    old_selected.config(bg=BUTTON_COLOR)
-    old_selected.config(font=(POLICE, '12'))
-    old_selected.config(activebackground=BUTTON_COLOR_ACTIVE)
-    old_selected_frame.config(highlightbackground=BUTTON_HB_COLOR)
-    old_selected_frame.config(highlightthickness=1)
+    old_selected["button"].config(bg=BUTTON_COLOR)
+    old_selected["button"].config(font=(POLICE, '10'))
+    old_selected["button"].config(activebackground=BUTTON_COLOR_ACTIVE)
+    old_selected["frame"].config(highlightbackground=BUTTON_HB_COLOR)
+    old_selected["frame"].config(highlightthickness=1)
     
     # set selected
-    new_selected.config(bg=BUTTON_COLOR_SELECTED)
-    new_selected.config(font=(POLICE, '12', 'bold'))
-    new_selected.config(activebackground=BUTTON_COLOR_SELECTED_ACTIVE)
-    new_selected_frame.config(highlightbackground=THEME_COLOR_1)
-    new_selected_frame.config(highlightthickness=3)
+    new_selected["button"].config(bg=BUTTON_COLOR_SELECTED)
+    new_selected["button"].config(font=(POLICE, '10', 'bold'))
+    new_selected["button"].config(activebackground=BUTTON_COLOR_SELECTED_ACTIVE)
+    new_selected["frame"].config(highlightbackground=THEME_COLOR_1)
+    new_selected["frame"].config(highlightthickness=3)
 
-def imparfait_source():
+def temps_select(temps):
     global SOURCE_SELECTED, TARGET_SELECTED
-    # insérer appel traduction
-    if SOURCE_SELECTED != 'Imparfait' :
-        switch_buttons(present_source_button, present_source_button_frame,
-                       imparfait_source_button, imparfait_source_button_frame)
-        switch_buttons(imparfait_target_button, imparfait_target_button_frame,
-                    present_target_button, present_target_button_frame)
-        SOURCE_SELECTED = 'Imparfait'
-        TARGET_SELECTED = 'Présent'
-        
-def present_source():
-    global SOURCE_SELECTED, TARGET_SELECTED
-    # insérer appel traduction
-    if SOURCE_SELECTED != 'Présent' :
-        switch_buttons(imparfait_source_button, imparfait_source_button_frame,
-                    present_source_button, present_source_button_frame)
-        switch_buttons(present_target_button, present_target_button_frame,
-                       imparfait_target_button, imparfait_target_button_frame)
-        SOURCE_SELECTED = 'Présent'
-        TARGET_SELECTED = 'Imparfait'
-        
-def imparfait_target():
-    global SOURCE_SELECTED, TARGET_SELECTED
-    # insérer appel traduction
-    if TARGET_SELECTED != 'Imparfait' :
-        switch_buttons(present_target_button, present_target_button_frame,
-                       imparfait_target_button, imparfait_target_button_frame)
-        switch_buttons(imparfait_source_button, imparfait_source_button_frame,
-                    present_source_button, present_source_button_frame)
-        SOURCE_SELECTED = 'Présent'
-        TARGET_SELECTED = 'Imparfait'
-        
-def present_target():
-    global SOURCE_SELECTED, TARGET_SELECTED
-    # insérer appel traduction
-    if TARGET_SELECTED != 'Présent' : 
-        switch_buttons(imparfait_target_button, imparfait_target_button_frame,
-                    present_target_button, present_target_button_frame)
-        switch_buttons(present_source_button, present_source_button_frame,
-                       imparfait_source_button, imparfait_source_button_frame)
-        SOURCE_SELECTED = 'Imparfait'
-        TARGET_SELECTED = 'Présent'
-  
+    new_selected_name = get_button_name(temps["button"])
+    if temps['origin'] == "source": 
+        # on vérifie si on ne clique pas sur un temps source déjà sélectionné
+        if SOURCE_SELECTED != temps :
+            switch_buttons(SOURCE_SELECTED, temps)
+            old_tgt_name = get_button_name(TARGET_SELECTED["button"])
+            # si le temps source sélectionné est le même que le temps cible
+            if old_tgt_name == new_selected_name :
+                old_src_name = get_button_name(SOURCE_SELECTED["button"])
+                if old_src_name != "⁂" :
+                    new_target = target_buttons[old_src_name]
+                else :
+                    new_target = pick_random_target(new_selected_name)
+                switch_buttons(TARGET_SELECTED, new_target)
+                TARGET_SELECTED = new_target
+            SOURCE_SELECTED = temps    
+    else :
+        # on vérifie si on ne clique pas sur un temps cible déjà sélectionné
+        if TARGET_SELECTED != temps :
+            switch_buttons(TARGET_SELECTED, temps)
+            old_src_name = get_button_name(SOURCE_SELECTED["button"])
+            # si le temps cible sélectionné est le même que le temps source
+            if old_src_name == new_selected_name :
+                old_tgt_name = get_button_name(TARGET_SELECTED["button"])
+                new_source = source_buttons[old_tgt_name]
+                switch_buttons(SOURCE_SELECTED, new_source)
+                SOURCE_SELECTED = new_source
+            TARGET_SELECTED = temps
+    # print("source_selected : %s , target_selected : %s"
+    #       %(get_button_name(SOURCE_SELECTED["button"]), get_button_name(TARGET_SELECTED["button"])))
+                         
 def traduire():
-    # insérer code
+    source_temps = get_button_name(SOURCE_SELECTED["button"])
+    target_temps = get_button_name(TARGET_SELECTED["button"])
+    
+    # ⁂ (source uniq.) / Passé simple / Imparfait / Présent / Futur
         
-    if SOURCE_SELECTED == 'Présent' and TARGET_SELECTED == 'Imparfait' : 
+    if source_temps == 'Présent' and target_temps == 'Imparfait' : 
         phrase_a_conjugue = source_text.get("1.0", END)[:-1]
         target_text.config(state='normal')
         target_text.delete("0.0", END)
         
-        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, TARGET_SELECTED, modele_francais)
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
         
         target_text.insert(END, phrase_conjugue)
         
-    elif SOURCE_SELECTED == 'Imparfait' and TARGET_SELECTED == 'Présent' : 
+    elif source_temps == 'Imparfait' and target_temps == 'Présent' : 
         phrase_a_conjugue = source_text.get("1.0", END)[:-1]
         target_text.config(state='normal')
         target_text.delete("0.0", END)
         
-        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, TARGET_SELECTED, modele_francais)
+        phrase_conjugue = conjugaisons.conjugaison_phrase(phrase_a_conjugue, target_temps, modele_francais)
         
         target_text.insert(END, phrase_conjugue)
     
     
     target_text.config(state='disabled')
-    
-    
     
     
     
@@ -162,34 +178,43 @@ source_label.pack()
 
 source_buttons_frame = Frame(source_pick_frame, bg=BACKGROUND_COLOR_2, pady=15)
 
-imparfait_source_button_frame = Frame(source_buttons_frame, bg=BACKGROUND_COLOR_2,  
-                         highlightbackground = BUTTON_HB_COLOR, highlightthickness = 1)
+source_buttons = {"Tout" : initialize_button(source_buttons_frame,"source","⁂", True),
+                  "Passé simple" : initialize_button(source_buttons_frame,"source","passé simple", False),
+                  "Imparfait" : initialize_button(source_buttons_frame,"source","imparfait", False),
+                  "Présent" : initialize_button(source_buttons_frame,"source","présent",False),
+                  "Futur" : initialize_button(source_buttons_frame,"source","futur",False)}
 
-imparfait_source_button = Button(imparfait_source_button_frame, text='Imparfait',
-                         font=(POLICE, '12'), bg=BUTTON_COLOR, relief='flat',
-                         command=imparfait_source)
+SOURCE_SELECTED = source_buttons["Tout"]
 
-imparfait_source_button.pack()
+source_buttons["Tout"]["button"].config( command= lambda :
+    temps_select(source_buttons["Tout"]) )
+source_buttons["Passé simple"]["button"].config( command= lambda :
+    temps_select(source_buttons["Passé simple"]) )
+source_buttons["Imparfait"]["button"].config( command= lambda :
+    temps_select(source_buttons["Imparfait"]) )
+source_buttons["Présent"]["button"].config( command= lambda :
+    temps_select(source_buttons["Présent"]) )
+source_buttons["Futur"]["button"].config( command= lambda :
+    temps_select(source_buttons["Futur"]) )
 
+source_buttons["Tout"]["button"].pack()
+source_buttons["Passé simple"]["button"].pack()
+source_buttons["Imparfait"]["button"].pack()
+source_buttons["Présent"]["button"].pack()
+source_buttons["Futur"]["button"].pack()
 
-present_source_button_frame = Frame(source_buttons_frame, bg=BACKGROUND_COLOR_2, 
-                         highlightbackground = THEME_COLOR_1, highlightthickness = 3)
+source_buttons_frame.columnconfigure(1, weight=1)
 
-present_source_button = Button(present_source_button_frame, text='Présent',
-                         bg=BUTTON_COLOR_SELECTED, activebackground=BUTTON_COLOR_SELECTED_ACTIVE, 
-                         font=(POLICE, '12', 'bold'), relief='flat', command=present_source)
-
-present_source_button.pack()
-
-source_buttons_frame.columnconfigure(1, weight=1, pad=10)
-
-imparfait_source_button_frame.grid(row=0, column=0)
-present_source_button_frame.grid(row=0, column=1)
+source_buttons["Tout"]["frame"].grid(row=0, column=0)
+source_buttons["Passé simple"]["frame"].grid(row=0, column=1)
+source_buttons["Imparfait"]["frame"].grid(row=0, column=2)
+source_buttons["Présent"]["frame"].grid(row=0, column=3)
+source_buttons["Futur"]["frame"].grid(row=0, column=4)
 
 source_buttons_frame.pack()
 source_pick_frame.pack()
 
-source_text = Text(source_frame, width=45, height=13, relief='sunken', padx=10, pady=10)
+source_text = Text(source_frame, width=45, height=13, padx=10, pady=10)
 source_text.pack()
 #source_text_string = str(source_text) #Phrase à conjugué
 #print(source_text_string) #Affichage de ce qui est entrée
@@ -204,31 +229,36 @@ target_label = Label(target_pick_frame, text="Cible", bg=BACKGROUND_COLOR_2,
                      fg="grey", font=(POLICE, '12', 'italic'))
 target_label.pack()
 
+
 target_buttons_frame = Frame(target_pick_frame, bg=BACKGROUND_COLOR_2, pady=15)
 
-imparfait_target_button_frame = Frame(target_buttons_frame, bg=BACKGROUND_COLOR_2, 
-                         highlightbackground = THEME_COLOR_1, highlightthickness = 3)
+target_buttons = {"Passé simple" : initialize_button(target_buttons_frame, "target", "passé simple", False),
+                  "Imparfait" : initialize_button(target_buttons_frame, "target", "imparfait", True),
+                  "Présent" : initialize_button(target_buttons_frame, "target", "présent",False),
+                  "Futur" : initialize_button(target_buttons_frame, "target", "futur",False)}
 
-imparfait_target_button = Button(imparfait_target_button_frame, text='Imparfait',
-                         bg=BUTTON_COLOR_SELECTED, activebackground=BUTTON_COLOR_SELECTED_ACTIVE, 
-                         font=(POLICE, '12', 'bold'), relief='flat', 
-                         command=imparfait_target)
+target_buttons["Passé simple"]["button"].config( command= lambda :
+    temps_select(target_buttons["Passé simple"]) )
+target_buttons["Imparfait"]["button"].config( command= lambda :
+    temps_select(target_buttons["Imparfait"]) )
+target_buttons["Présent"]["button"].config( command= lambda :
+    temps_select(target_buttons["Présent"]) )
+target_buttons["Futur"]["button"].config( command= lambda :
+    temps_select(target_buttons["Futur"]) )
 
-imparfait_target_button.pack()
+TARGET_SELECTED = target_buttons["Imparfait"]
 
+target_buttons["Passé simple"]["button"].pack()
+target_buttons["Imparfait"]["button"].pack()
+target_buttons["Présent"]["button"].pack()
+target_buttons["Futur"]["button"].pack()
 
-present_target_button_frame = Frame(target_buttons_frame, bg=BACKGROUND_COLOR_2,  
-                         highlightbackground = BUTTON_HB_COLOR, highlightthickness = 1)
+target_buttons_frame.columnconfigure(1, weight=1)
 
-present_target_button = Button(present_target_button_frame, text='Présent',
-                         font=(POLICE, '12'), bg=BUTTON_COLOR, relief='flat',command=present_target)
-
-present_target_button.pack()
-
-target_buttons_frame.columnconfigure(1, weight=1, pad=10)
-
-imparfait_target_button_frame.grid(row=0, column=0)
-present_target_button_frame.grid(row=0, column=1)
+target_buttons["Passé simple"]["frame"].grid(row=0, column=0)
+target_buttons["Imparfait"]["frame"].grid(row=0, column=1)
+target_buttons["Présent"]["frame"].grid(row=0, column=2)
+target_buttons["Futur"]["frame"].grid(row=0, column=3)
 
 target_buttons_frame.pack()
 target_pick_frame.pack()

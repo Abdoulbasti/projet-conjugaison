@@ -1,3 +1,4 @@
 etapes_installation_spacy.txt
 .vscode
 src/main.py
+src/__pycache__
